@@ -17,6 +17,12 @@ public class Net {
     private Thread connectThread;
     private Thread readThread;
 
+    private DataHandler dataHandler;
+
+    public void SetDataHandler(DataHandler dataHandler) {
+        this.dataHandler = dataHandler;
+    }
+
     public void Connect() {
         Logger.Log("Connect: Start");
         connectThread = new Thread(new ThreadStart(ConnectThread));
