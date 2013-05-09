@@ -6,6 +6,9 @@ public class Logger {
 
     private Logger() {}
 
+    ~Logger() {
+        writer.Close();
+    }
 
     public static void Log(string message) {
         writer.WriteLine(message);
