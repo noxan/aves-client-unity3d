@@ -52,4 +52,11 @@ public class Net {
             }
         }
     }
+
+    public void Disconnect() {
+        stream.Close();
+        tcpClient.Close();
+        readThread.Abort();
+        connectThread.Abort();
+    }
 }
