@@ -72,6 +72,10 @@ public class Net {
         stream.Write(array, 0, array.Length);
     }
 
+    public bool IsConnected() {
+        return tcpClient!=null && tcpClient.Client.Connected;
+    }
+
     public void Disconnect() {
         stream.Close();
         tcpClient.Close();
