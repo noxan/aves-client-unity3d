@@ -67,6 +67,11 @@ public class Net {
         }
     }
 
+    public void Write(string message) {
+        byte[] array = Encoding.ASCII.GetBytes(message);
+        stream.Write(array, 0, array.Length);
+    }
+
     public void Disconnect() {
         stream.Close();
         tcpClient.Close();
