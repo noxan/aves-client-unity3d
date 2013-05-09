@@ -18,6 +18,7 @@ public class Net {
     private Thread readThread;
 
     public void Connect() {
+        Logger.Log("Connect: Start");
         connectThread = new Thread(new ThreadStart(ConnectThread));
         connectThread.Start();
     }
@@ -30,6 +31,7 @@ public class Net {
 
             readThread = new Thread(new ThreadStart(ReadThread));
             readThread.Start();
+            Logger.Log("Connect: Successful");
         } catch(SocketException socketException) {
             Logger.Log("Connect: SocketException " + socketException);
         } catch(Exception exception) {
@@ -70,5 +72,6 @@ public class Net {
         tcpClient.Close();
         readThread.Abort();
         connectThread.Abort();
+        Logger.Log("Disconnect: Successful");
     }
 }
