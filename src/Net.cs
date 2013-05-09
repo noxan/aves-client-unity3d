@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 
 
+public delegate void DataHandler(string msg);
+
 public class Net {
     public const int BUFFER_SIZE = 1024;
 
@@ -44,12 +46,22 @@ public class Net {
                         Logger.Log("Read: End of stream, connection closed.");
                         break;
                     }
-                    string data = Encoding.ASCII.GetString(buf, 0, size);
+                    HandleData(byteBuffer, num);
                 }
             } catch(Exception exception) {
                 Logger.Log("Read: " + exception);
                 break;
             }
+        }
+    }
+
+    private void HandleData(byte[] buf, int size) {
+        if(dataHandler != null) {
+            string data = Encoding.ASCII.GetString(buf, 0, size);
+            Logger.Log(string.Format("DataHandler: {0}", data));
+            dataHandler(data);
+        } else {
+            Logger.Log("DataHandler: is null");
         }
     }
 
