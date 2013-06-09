@@ -106,6 +106,7 @@ public class Net {
         tcpClient.Close();
         readThread.Abort();
         connectThread.Abort();
+        fireNetEvent(NetEvent.DISCONNECT);
         Logger.Log("Disconnect: Successful");
     }
 }
