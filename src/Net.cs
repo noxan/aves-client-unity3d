@@ -1,11 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Threading;
 
-
-public delegate void DataHandler(string msg);
 
 public class Net {
     public const int BUFFER_SIZE = 1024;
@@ -17,10 +16,20 @@ public class Net {
     private Thread connectThread;
     private Thread readThread;
 
-    private DataHandler dataHandler;
+    private List<NetEventListener> listeners;
 
-    public void SetDataHandler(DataHandler dataHandler) {
-        this.dataHandler = dataHandler;
+    public void AddNetEventListener(NetEventListener listener) {
+        listeners.Add(listener);
+    }
+
+    private void fireNetEvent(NetEventType type, Object data) {
+        foreach(NetEventListener listener in listeners) {
+            listener(type, data);
+        }
+    }
+
+    public Net() {
+        listeners = new List<NetEventListener>();
     }
 
     public void Connect() {
@@ -37,6 +46,8 @@ public class Net {
 
             readThread = new Thread(new ThreadStart(ReadThread));
             readThread.Start();
+
+            fireNetEvent(NetEventType.CONNECT, null);
             Logger.Log("Connect: Successful");
         } catch(SocketException socketException) {
             Logger.Log("Connect: SocketException " + socketException);
@@ -64,18 +75,15 @@ public class Net {
     }
 
     private void HandleData(byte[] buf, int size) {
-        if(dataHandler != null) {
-            string data = Encoding.ASCII.GetString(buf, 0, size);
-            Logger.Log(string.Format("DataHandler: {0}", data));
-            dataHandler(data);
-        } else {
-            Logger.Log("DataHandler: is null");
-        }
+        string data = Encoding.ASCII.GetString(buf, 0, size);
+        Logger.Log(string.Format("DataHandler: {0}", data));
+        fireNetEvent(NetEventType.DATA_READ, data);
     }
 
     public void Write(string message) {
         byte[] array = Encoding.ASCII.GetBytes(message);
         stream.Write(array, 0, array.Length);
+        fireNetEvent(NetEventType.DATA_WRITE, message);
     }
 
     public bool IsConnected() {
@@ -87,6 +95,7 @@ public class Net {
         tcpClient.Close();
         readThread.Abort();
         connectThread.Abort();
+        fireNetEvent(NetEventType.DISCONNECT, null);
         Logger.Log("Disconnect: Successful");
     }
 }
