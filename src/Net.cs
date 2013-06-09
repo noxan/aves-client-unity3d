@@ -26,6 +26,10 @@ public class Net {
         this.dataHandler = dataHandler;
     }
 
+    public void AddNetEventListener(NetEventListener listener) {
+        listeners.Add(listener);
+    }
+
     public Net() {
         listeners = new List<NetEventListener>();
     }
