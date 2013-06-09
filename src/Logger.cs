@@ -12,5 +12,6 @@ public class Logger {
 
     public static void Log(string message) {
         writer.WriteLine(message);
+        writer.Flush();
     }
 }
