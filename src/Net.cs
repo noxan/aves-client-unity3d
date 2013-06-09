@@ -30,9 +30,9 @@ public class Net {
         listeners.Add(listener);
     }
 
-    private void fireNetEvent(NetEvent netEvent) {
+    private void fireNetEvent(NetEventType type) {
         foreach(NetEventListener listener in listeners) {
-            listener(netEvent);
+            listener(type);
         }
     }
 
@@ -55,7 +55,7 @@ public class Net {
             readThread = new Thread(new ThreadStart(ReadThread));
             readThread.Start();
 
-            fireNetEvent(NetEvent.CONNECT);
+            fireNetEvent(NetEventType.CONNECT);
             Logger.Log("Connect: Successful");
         } catch(SocketException socketException) {
             Logger.Log("Connect: SocketException " + socketException);
@@ -87,7 +87,7 @@ public class Net {
             string data = Encoding.ASCII.GetString(buf, 0, size);
             Logger.Log(string.Format("DataHandler: {0}", data));
             dataHandler(data);
-            fireNetEvent(NetEvent.DATA_READ);
+            fireNetEvent(NetEventType.DATA_READ);
         } else {
             Logger.Log("DataHandler: is null");
         }
@@ -96,7 +96,7 @@ public class Net {
     public void Write(string message) {
         byte[] array = Encoding.ASCII.GetBytes(message);
         stream.Write(array, 0, array.Length);
-        fireNetEvent(NetEvent.DATA_WRITE);
+        fireNetEvent(NetEventType.DATA_WRITE);
     }
 
     public bool IsConnected() {
@@ -108,7 +108,7 @@ public class Net {
         tcpClient.Close();
         readThread.Abort();
         connectThread.Abort();
-        fireNetEvent(NetEvent.DISCONNECT);
+        fireNetEvent(NetEventType.DISCONNECT);
         Logger.Log("Disconnect: Successful");
     }
 }

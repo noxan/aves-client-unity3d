@@ -1,1 +1,1 @@
-public delegate void NetEventListener(NetEvent netEvent);
+public delegate void NetEventListener(NetEventType netEvent);
