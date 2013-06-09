@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
@@ -19,8 +20,14 @@ public class Net {
 
     private DataHandler dataHandler;
 
+    private List<NetEventListener> listeners;
+
     public void SetDataHandler(DataHandler dataHandler) {
         this.dataHandler = dataHandler;
+    }
+
+    public Net() {
+        listeners = new List<NetEventListener>();
     }
 
     public void Connect() {
