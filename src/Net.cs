@@ -87,6 +87,7 @@ public class Net {
             string data = Encoding.ASCII.GetString(buf, 0, size);
             Logger.Log(string.Format("DataHandler: {0}", data));
             dataHandler(data);
+            fireNetEvent(NetEvent.DATA);
         } else {
             Logger.Log("DataHandler: is null");
         }
