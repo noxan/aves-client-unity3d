@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading;
 
 
-public delegate void DataHandler(string msg);
-
 public class Net {
     public const int BUFFER_SIZE = 1024;
 
@@ -18,13 +16,7 @@ public class Net {
     private Thread connectThread;
     private Thread readThread;
 
-    private DataHandler dataHandler;
-
     private List<NetEventListener> listeners;
-
-    public void SetDataHandler(DataHandler dataHandler) {
-        this.dataHandler = dataHandler;
-    }
 
     public void AddNetEventListener(NetEventListener listener) {
         listeners.Add(listener);
@@ -83,14 +75,9 @@ public class Net {
     }
 
     private void HandleData(byte[] buf, int size) {
-        if(dataHandler != null) {
-            string data = Encoding.ASCII.GetString(buf, 0, size);
-            Logger.Log(string.Format("DataHandler: {0}", data));
-            dataHandler(data);
-            fireNetEvent(NetEventType.DATA_READ, data);
-        } else {
-            Logger.Log("DataHandler: is null");
-        }
+        string data = Encoding.ASCII.GetString(buf, 0, size);
+        Logger.Log(string.Format("DataHandler: {0}", data));
+        fireNetEvent(NetEventType.DATA_READ, data);
     }
 
     public void Write(string message) {
