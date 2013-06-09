@@ -30,6 +30,12 @@ public class Net {
         listeners.Add(listener);
     }
 
+    private void fireNetEvent(NetEvent netEvent) {
+        foreach(NetEventListener listener in listeners) {
+            listener(netEvent);
+        }
+    }
+
     public Net() {
         listeners = new List<NetEventListener>();
     }
@@ -48,6 +54,8 @@ public class Net {
 
             readThread = new Thread(new ThreadStart(ReadThread));
             readThread.Start();
+
+            fireNetEvent(NetEvent.CONNECT);
             Logger.Log("Connect: Successful");
         } catch(SocketException socketException) {
             Logger.Log("Connect: SocketException " + socketException);
