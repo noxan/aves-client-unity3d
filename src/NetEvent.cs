@@ -1,3 +1,3 @@
 public enum NetEvent {
-    CONNECT, DISCONNECT, DATA
+    CONNECT, DISCONNECT, DATA_READ, DATA_WRITE
 }

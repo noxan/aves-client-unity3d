@@ -87,7 +87,7 @@ public class Net {
             string data = Encoding.ASCII.GetString(buf, 0, size);
             Logger.Log(string.Format("DataHandler: {0}", data));
             dataHandler(data);
-            fireNetEvent(NetEvent.DATA);
+            fireNetEvent(NetEvent.DATA_READ);
         } else {
             Logger.Log("DataHandler: is null");
         }
@@ -96,6 +96,7 @@ public class Net {
     public void Write(string message) {
         byte[] array = Encoding.ASCII.GetBytes(message);
         stream.Write(array, 0, array.Length);
+        fireNetEvent(NetEvent.DATA_WRITE);
     }
 
     public bool IsConnected() {
