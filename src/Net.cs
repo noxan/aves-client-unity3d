@@ -32,6 +32,10 @@ public class Net {
     }
 
     public Net() {
+        Initialize();
+    }
+
+    private void Initialize() {
         listeners = new List<NetEventListener>();
     }
 
