@@ -1,8 +1,13 @@
+using System;
 using System.IO;
 
 
 public class Logger {
-    private static readonly StreamWriter writer = File.AppendText(@".\aves-network.log");
+    public static string GetLogFilename() {
+        return string.Format(@".\aves-network-{0}.log", DateTime.UtcNow.ToString("yyyyMMddHHmmssffff"));
+    }
+
+    private static readonly StreamWriter writer = File.AppendText(GetLogFilename());
 
     private Logger() {}
 
