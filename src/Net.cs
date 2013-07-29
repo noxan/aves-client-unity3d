@@ -16,6 +16,9 @@ public class Net {
     private Thread connectThread;
     private Thread readThread;
 
+    private string host = "127.0.0.1";
+    private int port = 1666;
+
     private List<NetEventListener> listeners;
 
     public void AddNetEventListener(NetEventListener listener) {
@@ -32,6 +35,17 @@ public class Net {
         listeners = new List<NetEventListener>();
     }
 
+    public void Connect(string host) {
+        this.host = host;
+        Connect();
+    }
+
+    public void Connect(string host, int port) {
+        this.host = host;
+        this.port = port;
+        Connect();
+    }
+
     public void Connect() {
         Logger.Log("Connect: Start");
         connectThread = new Thread(new ThreadStart(ConnectThread));
@@ -41,7 +55,7 @@ public class Net {
     private void ConnectThread() {
         try {
             tcpClient = new TcpClient();
-            tcpClient.Client.Connect("localhost", 1666);
+            tcpClient.Client.Connect(this.host, this.port);
             stream = tcpClient.GetStream();
 
             readThread = new Thread(new ThreadStart(ReadThread));
