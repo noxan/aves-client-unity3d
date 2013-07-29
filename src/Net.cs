@@ -21,6 +21,7 @@ public class Net {
 
     private bool eventDriven = false;
 
+    private Queue<Tuple<NetEventType, Object>> networkEvents;
     private List<NetEventListener> listeners;
 
     public void AddNetEventListener(NetEventListener listener) {
@@ -44,6 +45,7 @@ public class Net {
 
     private void Initialize() {
         listeners = new List<NetEventListener>();
+        networkEvents = new Queue<Tuple<NetEventType, Object>>();
     }
 
     public void Connect(string host) {
