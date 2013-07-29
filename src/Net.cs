@@ -24,16 +24,6 @@ public class Net {
     private Queue<Tuple<NetEventType, Object>> networkEvents;
     private List<NetEventListener> listeners;
 
-    public void AddNetEventListener(NetEventListener listener) {
-        listeners.Add(listener);
-    }
-
-    private void fireNetEvent(NetEventType type, Object data) {
-        foreach(NetEventListener listener in listeners) {
-            listener(type, data);
-        }
-    }
-
     public Net() {
         Initialize();
     }
@@ -46,6 +36,16 @@ public class Net {
     private void Initialize() {
         listeners = new List<NetEventListener>();
         networkEvents = new Queue<Tuple<NetEventType, Object>>();
+    }
+
+    public void AddNetEventListener(NetEventListener listener) {
+        listeners.Add(listener);
+    }
+
+    private void fireNetEvent(NetEventType type, Object data) {
+        foreach(NetEventListener listener in listeners) {
+            listener(type, data);
+        }
     }
 
     public void Connect(string host) {
