@@ -19,6 +19,8 @@ public class Net {
     private string host = "127.0.0.1";
     private int port = 1666;
 
+    private bool eventDriven = false;
+
     private List<NetEventListener> listeners;
 
     public void AddNetEventListener(NetEventListener listener) {
@@ -32,6 +34,11 @@ public class Net {
     }
 
     public Net() {
+        Initialize();
+    }
+
+    public Net(bool eventDriven) {
+        this.eventDriven = eventDriven;
         Initialize();
     }
 
