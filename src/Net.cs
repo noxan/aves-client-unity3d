@@ -20,6 +20,7 @@ public class Net {
     private int port = 1666;
 
     private bool eventDriven = false;
+    private object locker = new object();
 
     private Queue<Tuple<NetEventType, Object>> networkEvents;
     private List<NetEventListener> listeners;
@@ -39,12 +40,31 @@ public class Net {
     }
 
     public void AddNetEventListener(NetEventListener listener) {
-        listeners.Add(listener);
+        if(eventDriven) {
+            listeners.Add(listener);
+        } else {
+            throw new NotSupportedException("Event listeners are only available in event driven mode.");
+        }
+    }
+
+    public Tuple<NetEventType, Object> PollNetworkEvent() {
+        lock(locker) {
+            if(networkEvents.Count > 0) {
+                return networkEvents.Dequeue();
+            }
+        }
+        return null;
     }
 
     private void fireNetEvent(NetEventType type, Object data) {
-        foreach(NetEventListener listener in listeners) {
-            listener(type, data);
+        if(eventDriven) {
+            foreach(NetEventListener listener in listeners) {
+                listener(type, data);
+            }
+        } else {
+            lock(locker) {
+                networkEvents.Enqueue(new Tuple<NetEventType, Object>(type, data));
+            }
         }
     }
 
