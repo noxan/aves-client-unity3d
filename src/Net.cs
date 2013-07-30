@@ -19,24 +19,53 @@ public class Net {
     private string host = "127.0.0.1";
     private int port = 1666;
 
+    private bool eventDriven = false;
+    private object locker = new object();
+
+    private Queue<Tuple<NetEventType, Object>> networkEvents;
     private List<NetEventListener> listeners;
-
-    public void AddNetEventListener(NetEventListener listener) {
-        listeners.Add(listener);
-    }
-
-    private void fireNetEvent(NetEventType type, Object data) {
-        foreach(NetEventListener listener in listeners) {
-            listener(type, data);
-        }
-    }
 
     public Net() {
         Initialize();
     }
 
+    public Net(bool eventDriven) {
+        this.eventDriven = eventDriven;
+        Initialize();
+    }
+
     private void Initialize() {
         listeners = new List<NetEventListener>();
+        networkEvents = new Queue<Tuple<NetEventType, Object>>();
+    }
+
+    public void AddNetEventListener(NetEventListener listener) {
+        if(eventDriven) {
+            listeners.Add(listener);
+        } else {
+            throw new NotSupportedException("Event listeners are only available in event driven mode.");
+        }
+    }
+
+    public Tuple<NetEventType, Object> PollNetworkEvent() {
+        lock(locker) {
+            if(networkEvents.Count > 0) {
+                return networkEvents.Dequeue();
+            }
+        }
+        return null;
+    }
+
+    private void fireNetEvent(NetEventType type, Object data) {
+        if(eventDriven) {
+            foreach(NetEventListener listener in listeners) {
+                listener(type, data);
+            }
+        } else {
+            lock(locker) {
+                networkEvents.Enqueue(new Tuple<NetEventType, Object>(type, data));
+            }
+        }
     }
 
     public void Connect(string host) {
